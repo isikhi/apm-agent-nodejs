@@ -43,7 +43,7 @@ test('new MongoClient(url); client.connect(callback)', { skip: !mongodbSupportsC
   resetAgent(2, function (data) {
     t.equal(data.transactions[0].name, 't0', 'transaction.name')
     t.equal(data.spans.length, 1)
-    t.equal(data.spans[0].name, 'elasticapm.test.find', 'span.name')
+    t.equal(data.spans[0].name, 'elasticapm.test.findOne', 'span.name')
     t.equal(data.spans[0].subtype, 'mongodb', 'span.subtype')
     t.equal(data.spans[0].parent_id, data.transactions[0].id, 'span.parent_id')
     t.end()
@@ -70,7 +70,7 @@ test('new MongoClient(url, {...}); client.connect(callback)', { skip: !mongodbSu
   resetAgent(2, function (data) {
     t.equal(data.transactions[0].name, 't0', 'transaction.name')
     t.equal(data.spans.length, 1)
-    t.equal(data.spans[0].name, 'elasticapm.test.find', 'span.name')
+    t.equal(data.spans[0].name, 'elasticapm.test.findOne', 'span.name')
     t.equal(data.spans[0].subtype, 'mongodb', 'span.subtype')
     t.equal(data.spans[0].parent_id, data.transactions[0].id, 'span.parent_id')
     t.end()
@@ -98,7 +98,7 @@ test('MongoClient.connect(url, callback)', { skip: !mongodbSupportsCallbacks }, 
   resetAgent(2, function (data) {
     t.equal(data.transactions[0].name, 't0', 'transaction.name')
     t.equal(data.spans.length, 1)
-    t.equal(data.spans[0].name, 'elasticapm.test.find', 'span.name')
+    t.equal(data.spans[0].name, 'elasticapm.test.findOne', 'span.name')
     t.equal(data.spans[0].subtype, 'mongodb', 'span.subtype')
     t.equal(data.spans[0].parent_id, data.transactions[0].id, 'span.parent_id')
     t.end()
@@ -137,7 +137,7 @@ test('await MongoClient.connect(url)', async function (t) {
     const data = agent._apmClient._writes
     t.equal(data.transactions[0].name, 't0', 'transaction.name')
     t.equal(data.spans.length, 1)
-    t.equal(data.spans[0].name, 'elasticapm.test.find', 'span.name')
+    t.equal(data.spans[0].name, 'elasticapm.test.findOne', 'span.name')
     t.equal(data.spans[0].subtype, 'mongodb', 'span.subtype')
     t.equal(data.spans[0].parent_id, data.transactions[0].id, 'span.parent_id')
   })
@@ -181,9 +181,9 @@ test('ensure run context', async function (t) {
 
 test('instrument simple command', async function (t) {
   resetAgentStates([
-    makeSpanTest(t, 'elasticapm.test.insert', 'insert'),
-    makeSpanTest(t, 'elasticapm.test.update', 'update'),
-    makeSpanTest(t, 'elasticapm.test.delete', 'delete'),
+    makeSpanTest(t, 'elasticapm.test.insertMany', 'insertMany'),
+    makeSpanTest(t, 'elasticapm.test.updateOne', 'updateOne'),
+    makeSpanTest(t, 'elasticapm.test.deleteOne', 'deleteOne'),
     makeSpanTest(t, 'elasticapm.test.find', 'find'),
     makeTransactionTest(t)
   ], function () {
