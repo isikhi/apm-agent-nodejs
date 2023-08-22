@@ -31,6 +31,112 @@ Notes:
 [[release-notes-3.x]]
 === Node.js Agent version 3.x
 
+
+[[release-notes-3.49.1]]
+==== 3.49.1 - 2023/08/09
+
+[float]
+===== Bug fixes
+
+* Upgrade import-in-the-middle dependency to v1.4.2 to fix a vulnerability
+  (https://github.com/DataDog/import-in-the-middle/security/advisories/GHSA-5r27-rw8r-7967[CVE-2023-38704]).
+  Note: This dependency is only used by elastic-apm-node when using the
+  <<esm,experimental ESM support>>. ({pull}3569[#3569])
+
+[float]
+===== Chores
+
+* Add debug logging for 4xx responses from APM server when polling for
+  central config. This is based on https://github.com/elastic/apm-nodejs-http-client/pull/182
+  by @linjunpop.
+
+
+[[release-notes-3.49.0]]
+==== 3.49.0 - 2023/08/03
+
+[float]
+===== Bug fixes
+
+* Fix ESM support: the "loader.mjs" file was accidentally not included in
+  the published package in v3.48.0. ({pull}3534[#3534])
+
+* Fix instrumentation of `@aws-sdk/client-s3` from v3.378.0 and up. The new
+  version requires `@smithy/smithy-client` v2.0.1 and the agent was
+  instrumenting it within the semver range '>=1 <2'. ({issues}3523[#3523])
+
+* Fix wrapping of `http.request()` for node v18.17.0. Before this change, a
+  call with a non-Function callback -- `http.request(urlString, {}, 'this-is-not-a-cb-function')`
+  -- would accidentally *not* fail because of the agent's instrumentation.
+  ({pull}3511[#3511])
+
+* Fix tedious instrumentation to recognize "connection.prepare()" usage in
+  tedious@16.2.0 and later. ({pull}3470[#3470])
+
+[float]
+===== Chores
+
+* Add min node verison in `tav.json` to generate lighter matrix for TAV commands.
+  ({pull}3531[#3531])
+
+* Inline the `elastic-apm-http-client` package code into this repo.
+  ({issues}3506[#3506])
+
+
+[[release-notes-3.48.0]]
+==== 3.48.0 - 2023/07/07
+
+*Known issue*: You must upgrade to 3.49.0 or later for the ESM support
+described below to work, because the "loader.mjs" file was accidentally not
+published.
+
+[float]
+===== Features
+
+* Initial and experimental ECMAScript Module (ESM) support.
+  With the following invocation the APM agent will now be able to instrument
+  modules loaded via `import`. (See the https://nodejs.org/api/esm.html#introduction[Node.js introduction to ESM].)
++
+[source,bash]
+----
+node -r elastic-apm-node/start.js \
+  --experimental-loader=elastic-apm-node/loader.mjs \
+  server.mjs
+
+# or
+
+NODE_OPTIONS='-r elastic-apm-node/start.js --experimental-loader=elastic-apm-node/loader.mjs'
+node server.mjs
+----
++
+The new usage requirement is the `--experimental-loader=elastic-apm-node/loader.mjs` option.
+This initial release only includes support for instrumenting a subset of the
+modules listed at <<supported-technologies>>. This set will grow in subsequent
+versions. Notably, ESM support does not currently work in node v20 -- only in
+recent versions of node v12-v18. ESM support will remain experimental while the
+https://nodejs.org/api/esm.html#loaders[Node.js Loaders API] is experimental.
+See <<esm>> for full details.
+
+* Send `configured_hostname` and `detected_hostname` metadata separately,
+  rather than the old deprecated single `hostname` metadatum. As well, the
+  detected hostname now attempts to collect a FQDN to be used in the
+  `host.name` field in the Elasticsearch document. ({issues}3310[#3310])
+
+[float]
+===== Bug fixes
+
+* Ensure `apm.setGlobalLabel(...)` does not throw an error when apm is inactive.
+  ({issues}3442[#3442])
+
+* Set the trace-context for an incoming HTTP/2 request. Contributed by @paulish.
+  ({issues}1830[#1830])
+
+* Fix aws-sdk v3 instrumentation (currently just `@aws-sdk/client-s3`) for
+  versions 3.363.0 and later. ({pull}3455[#3455])
+
+* Fix a possible crash when using `getSignedUrl()` from `@aws-sdk/s3-request-presigner`
+  due to a bug in `@aws-sdk/client-s3` instrumentation. ({issues}3464[#3464])
+
+
 [[release-notes-3.47.0]]
 ==== 3.47.0 - 2023/06/14
 

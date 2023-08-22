@@ -78,6 +78,7 @@ npm ls --omit=dev --all --parseable \
         const fs = require("fs")
         const path = require("path")
         const knownLicTypes = {
+            "0BSD": true,
             "Apache-2.0": true,
             "BSD-2-Clause": true,
             "BSD-3-Clause": true,
@@ -89,6 +90,7 @@ npm ls --omit=dev --all --parseable \
         // We handle getting the license text for a few specific deps that
         // do not include one in their install.
         const licFileFromPkgName = {
+            "acorn-import-assertions": "license.MIT.txt",
             "async-value": "license.MIT.txt",
             "async-value-promise": "license.MIT.txt",
             "breadth-filter": "license.MIT.txt",
