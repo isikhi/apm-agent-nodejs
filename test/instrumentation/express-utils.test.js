@@ -26,13 +26,25 @@ test('#getPathFromRequest', function (t) {
     t.equals(path, '/foo/bar');
     t.end();
   });
+  t.test('should return path for express.use base urls as path ', function (t) {
+    const req = createRequest(
+      'https://test.com/foo/bar?query=value#hash',
+      'example.com',
+      {
+        baseUrl: '/foo/bar',
+      },
+    );
+    const path = getPathFromRequest(req, false, false);
+    t.equals(path, '/foo/bar');
+    t.end();
+  });
 });
-
-function createRequest(url, host = 'example.com') {
+function createRequest(url, host = 'example.com', additionalItems) {
   return {
     url,
     headers: {
       host,
     },
+    ...additionalItems,
   };
 }
